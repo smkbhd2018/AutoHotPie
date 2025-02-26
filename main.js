@@ -249,7 +249,7 @@ const template = [
         {
           label: 'Donate',
           click: () => {
-            shell.openExternal('https://www.paypal.com/donate?business=RBTDTCUBK4Z8S&no_recurring=1&item_name=Support+Pie+Menus+Development&currency_code=USD')             
+            throw new Error('Awww thanks! :)\n\n Not taking donations right now, but I appreciate you!')
           }
         },
         {

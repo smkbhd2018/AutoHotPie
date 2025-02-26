@@ -455,9 +455,6 @@ var globalSettings = {
         this.ahkLink.addEventListener('click', () => {
             openURL("https://www.autohotkey.com/");    
         });
-        this.donateBtn.addEventListener('click', () => {
-            openURL("https://www.paypal.com/donate?business=RBTDTCUBK4Z8S&no_recurring=1&item_name=Support+Pie+Menus+Development&currency_code=USD")
-        })
         setRunOnLogin(AutoHotPieSettings.global.startup.runOnStartup, AutoHotPieSettings.global.startup.runAHKPieMenus);        
     },
     ahkLink: document.getElementById('ahk-link'),
@@ -469,5 +466,5 @@ var globalSettings = {
     updateBtn: document.getElementById('check-for-update-btn'),    
     versionText: document.getElementById('version-text'),    
     githubBtn: document.getElementById('github-btn'),
-    donateBtn: document.getElementById('paypal-donate-btn')
+    
 }
