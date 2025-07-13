@@ -724,7 +724,8 @@ var editPieMenu = {
                 let selectedPieMenu = editPieMenu.selectedPieMenu
                 let selectedSlice = editPieMenu.selectedSlice
                 let disp = editPieMenu.pieMenuDisplay
-                
+                let isGridLayout = (selectedPieMenu.layout === 'grid');
+
                 let c = document.getElementById('pie-menu-center');
                 let cFG = document.getElementById('pie-menu-foreground');
                 let ctx = c.getContext("2d");
@@ -735,7 +736,12 @@ var editPieMenu = {
                 
 
                 // let bounds = [window.innerWidth, window.innerHeight];
-                let bounds = [window.innerWidth, Math.max(selectedPieMenu.radius+selectedPieMenu.labelRadius+200,400)];  //FIX ME
+                let bounds;
+                if(isGridLayout){
+                    bounds = [window.innerWidth, 400];
+                }else{
+                    bounds = [window.innerWidth, Math.max(selectedPieMenu.radius+selectedPieMenu.labelRadius+200,400)];  //FIX ME
+                }
                 c.width = bounds[0]
                 c.height = bounds[1]          
                 cFG.width = bounds[0]
@@ -794,9 +800,11 @@ var editPieMenu = {
 
                     let selectedSlicePosition;
                     
-                    if(element.type == "pieCircle"){                        
-                        //draw circle and set region
-                        disp.draw.pieCircle(element, centerPos);
+                    if(element.type == "pieCircle"){
+                        if(!isGridLayout){
+                            //draw circle and set region
+                            disp.draw.pieCircle(element, centerPos);
+                        }
                     }
                     else if(element.type == "sliceLabel" && element.isDragging == false){
                         let isSelected = element.isSelected;
@@ -1171,12 +1179,18 @@ var editPieMenu = {
                 editPieMenu.pieMenuDisplay.refresh();
             });
 
-            this.mainMenu.labelRoundnessSlider.on('mousedown mousemove change', (event) => {                         
-                let newValue = handleSliderDiv(event);                
+            this.mainMenu.labelRoundnessSlider.on('mousedown mousemove change', (event) => {
+                let newValue = handleSliderDiv(event);
                 // (typeof(newValue) === 'number') && (editPieMenu.selectedPieMenu.labelRoundness = newValue)
                 if (typeof(newValue) === 'number') {
                     editPieMenu.selectedPieKey.pieMenus.forEach((pieMenu) => {pieMenu.labelRoundness = newValue})
-                }        
+                }
+                editPieMenu.pieMenuDisplay.refresh();
+            });
+
+            // Menu Layout select
+            $('#menu-layout-select').on('change', (event) => {
+                editPieMenu.selectedPieMenu.layout = event.target.value;
                 editPieMenu.pieMenuDisplay.refresh();
             });
 
@@ -1312,6 +1326,7 @@ var editPieMenu = {
                 setSliderDivValue(this.mainMenu.labelRoundnessSlider,selectedPieMenu.labelRoundness,0,100);
                 editPieMenu.selectedPieKey.pieMenus.forEach( (pieMenu) => {pieMenu.labelRoundness = editPieMenu.selectedPieKey.pieMenus[0].labelRoundness});
                 setSliderDivValue(this.mainMenu.labelDelaySlider,editPieMenu.selectedPieKey.labelDelay,0,50,1);
+                $('#menu-layout-select').val(selectedPieMenu.layout);
             }else{
                 if(editPieMenu.selectedPieMenu.pieAngle != 0){
                     $('#sub-angle-offset-btncheck1').prop('checked', false)
@@ -1331,6 +1346,7 @@ var editPieMenu = {
                 } else {
                     this.subMenu.backFunctionCheckBox.checked = false                    
                 }
+                $("#menu-layout-select").val(selectedPieMenu.layout);
             }  
         },
         refreshPieAngle(setIsOffset=null){

@@ -249,6 +249,12 @@
                                                 <p style="margin-right: 14px;margin-bottom: 3px;width: 194.8281px;">Label Roundness:</p><input class="form-range" type="range" style="margin-right: 15px;"><input class="bg-dark border rounded-0 border-dark" type="text" style="font-size: 16px;color: var(--bs-white);width: 40px;text-align: center;" placeholder="20" maxlength="3" inputmode="numeric">
                                             </div>
                                             <div class="d-flex align-items-center" style="margin-bottom: 9px;">
+                                                <p style="margin-right: 14px;margin-bottom: 3px;">Layout:</p><select id="menu-layout-select" class="form-select" style="height: 38px;max-width: 143px;">
+                                                    <option value="radial" selected="">Radial</option>
+                                                    <option value="grid">Grid</option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex align-items-center" style="margin-bottom: 9px;">
                                                 <p style="margin-right: 14px;margin-bottom: 3px;">Angle:</p><div id="main-angle-offset-btn-group" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
     <input type="checkbox" name="none" class="btn-check" id="main-angle-offset-btncheck1" checked="" autocomplete="off">
     <label class="btn btn-outline-primary" name="none" for="main-angle-offset-btncheck1">None</label>
@@ -603,6 +609,15 @@
                             <div class="d-flex align-items-center">
                                 <h5 class="d-xxl-flex align-items-xxl-center" style="margin-bottom: -10px;margin-right: 15px;margin-top: -11px;">Background Color:</h5>
                             </div><input class="form-control" type="text" id="new-background-color-input" data-jscolor="" value="" style="width: 143px;">
+                        </div>
+                        <div class="d-flex justify-content-start" style="padding-top: 12px;padding-bottom: 12px;">
+                            <div class="d-flex align-items-center"></div>
+                            <div class="d-flex align-items-center">
+                                <h5 class="d-xxl-flex align-items-xxl-center" style="margin-bottom: -10px;margin-right: 15px;margin-top: -11px;">Layout:</h5>
+                            </div><select id="new-menu-layout-select" class="form-select" style="width: 143px;">
+                                <option value="radial" selected="">Radial</option>
+                                <option value="grid">Grid</option>
+                            </select>
                         </div>
                         <div class="d-flex justify-content-center" style="padding-top: 12px;padding-bottom: 12px;margin-top: 15px;">
                             <div class="d-flex align-items-center"></div>
