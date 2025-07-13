@@ -1435,6 +1435,7 @@ var editPieMenu = {
         },        
         sliceHotkeyBtn: document.getElementById('change-slice-hotkey-btn'),
         sliceRemoveHotkeyBtn:document.getElementById('unset-slice-hotkey-btn'),
+        sliceColorInput: $('#slice-color-input')[0].jscolor,
         sliceFunction: {
             dropdownBtn: document.getElementById('function-dropdown-btn'),
             dropdownMenu: document.getElementById('function-dropdown-menu'),
@@ -1565,9 +1566,19 @@ var editPieMenu = {
             });
             this.sliceRemoveHotkeyBtn.addEventListener('click',function(event){
                 editPieMenu.selectedSlice.hotkey = "";
-                editPieMenu.sliceSettings.loadSelectedPieKey();  
-                editPieMenu.pieMenuDisplay.refresh();             
+                editPieMenu.sliceSettings.loadSelectedPieKey();
+                editPieMenu.pieMenuDisplay.refresh();
             });
+
+            let colorRefreshTime = 16;
+            this.sliceColorInput.onInput = throttle(function(){
+                editPieMenu.selectedSlice.selectionColor = hexToRgb(this.toHEXString());
+                editPieMenu.pieMenuDisplay.refresh();
+            }, colorRefreshTime);
+            this.sliceColorInput.onChange = function(){
+                editPieMenu.selectedSlice.selectionColor = hexToRgb(this.toHEXString());
+                editPieMenu.pieMenuDisplay.refresh();
+            };
 
             $('#app-profile-dropdown-items').on('click', 'a', function(event) {
                 var appProfileName = this.textContent;
@@ -1610,19 +1621,21 @@ var editPieMenu = {
                             hotkey: editPieMenu.selectedSlice.hotkey,
                             clickable: editPieMenu.selectedSlice.clickable,
                             returnMousePos: editPieMenu.selectedSlice.returnMousePos,
-                            icon: editPieMenu.selectedSlice.icon
-                        });                     
+                            icon: editPieMenu.selectedSlice.icon,
+                            selectionColor: editPieMenu.selectedSlice.selectionColor
+                        });
                     } else {
                         newPieFunc = new PieFunction({
-                            function: selectedFunc.ahkFunction,                    
+                            function: selectedFunc.ahkFunction,
                             params: PieFunction.getPieFunctionDefaultParameters(selectedFunc.ahkFunction),   
                             label: editPieMenu.selectedSlice.label,
                             hotkey: editPieMenu.selectedSlice.hotkey,
                             clickable: editPieMenu.selectedSlice.clickable,
                             returnMousePos: editPieMenu.selectedSlice.returnMousePos,
-                            icon: editPieMenu.selectedSlice.icon
+                            icon: editPieMenu.selectedSlice.icon,
+                            selectionColor: editPieMenu.selectedSlice.selectionColor
                         });
-                    }                 
+                    }
                     Object.assign(editPieMenu.selectedSlice, newPieFunc)
 
                     if (editPieMenu.selectedSlice.function == "submenu"){
@@ -1684,6 +1697,7 @@ var editPieMenu = {
                             pieAngle: 0,
                             functions: PieFunction.fill(9)
                         });
+                        newPieMenuObj.functions.forEach(func => func.selectionColor = editPieMenu.selectedPieMenu.selectionColor);
                         editPieMenu.selectedPieKey.pieMenus[pieNumber] = newPieMenuObj
                         return {pieMenuNumber: pieNumber,isBack: false}
                     }
@@ -2041,6 +2055,8 @@ var editPieMenu = {
                 this.sliceHotkeyBtn.innerHTML = editPieMenu.selectedSlice.hotkey;
                 editPieMenu.sliceSettings.sliceRemoveHotkeyBtn.style.visibility = "visible";
             }
+
+            this.sliceColorInput.processValueInput(rgbToHex(editPieMenu.selectedSlice.selectionColor || editPieMenu.selectedPieMenu.selectionColor));
             
             let selectedSliceFunction = getSelectedFunction();            
             if(editPieMenu.selectedPieMenu.functions.indexOf(editPieMenu.selectedSlice) == 0){            
