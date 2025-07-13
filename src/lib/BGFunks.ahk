@@ -1334,11 +1334,17 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 
 	
 	bgColor := activePieProfile.backgroundColor
-	selectColor := activePieProfile.selectionColor
+       selectColor := activePieProfile.selectionColor
 
 
 
-	nTheta := (Floor(cycleRange(theta-thetaOffset)/(360/numSlices))*(360/numSlices))+thetaOffset
+       calculatedPieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1
+       if (dist <= radius && !drawIndicator)
+               pieRegion := 0
+       else
+               pieRegion := calculatedPieRegion
+       sliceColor := (pieRegion > 0 && pieRegion <= numSlices) ? activePieProfile.functions[pieRegion+1].selectionColor : selectColor
+       nTheta := ((calculatedPieRegion-1)*(360/numSlices))+thetaOffset
 	gmx := xPos
 	gmy := yPos
 	submenuMarkRadius := radius+thickness+(5*Mon.pieDPIScale)
@@ -1354,22 +1360,16 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 	; Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 	Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 
-	If (dist <= radius)
-		{
-		selectPen := Gdip_CreatePen(RGBAtoHEX(selectColor), thickness/2)
-		Gdip_DrawEllipse(G, selectPen, (gmx-((radius)+ (thickness / 4))), (gmy-((radius)+ (thickness / 4))), 2*radius+(thickness/2), 2*radius+(thickness/2))
-		if drawIndicator
-			pieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1	
-		else
-			pieRegion := 0
-		}
-	Else
-		{
-		selectPen := Gdip_CreatePen(RGBAtoHEX(selectColor), thickness)
-		Gdip_DrawArc(G, selectPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (nTheta)-90, (360/numSlices))	
-		pieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1	
-		; pieRegion := nTheta/(360/numSlices)
-		}
+       If (dist <= radius)
+               {
+               selectPen := Gdip_CreatePen(RGBAtoHEX(sliceColor), thickness/2)
+               Gdip_DrawEllipse(G, selectPen, (gmx-((radius)+ (thickness / 4))), (gmy-((radius)+ (thickness / 4))), 2*radius+(thickness/2), 2*radius+(thickness/2))
+               }
+       Else
+               {
+               selectPen := Gdip_CreatePen(RGBAtoHEX(sliceColor), thickness)
+               Gdip_DrawArc(G, selectPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (nTheta)-90, (360/numSlices))
+               }
 	;Draw pie slice indicators
 
 	
