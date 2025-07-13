@@ -9,7 +9,7 @@
     "build":"npm run refresh-index-scripts",    
     "build-installer": "npm run build && npm run build-ahk && electron-builder",
     "build-ahk": "build\\build-ahk.bat",
-    "refresh-index-scripts":"node build\\refreshIndexScripts.js"
+    "refresh-index-scripts":"node ./build/refreshIndexScripts.js"
   },
   "build": {
     "appId": "AutoHotPie",

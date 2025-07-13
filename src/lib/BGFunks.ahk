@@ -1547,13 +1547,14 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 			sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.backgroundColor[1],activePieProfile.backgroundColor[2],activePieProfile.backgroundColor[3],128])	
 			;hover color
 		}
-	}else{
-		strokeColor := RGBAtoHEX(safetyGreyColor)
-		labelBGColor := RGBAtoHEX(activePieProfile.backgroundColor)
-		textColor := RGBAtoHEX(activePieProfile.fontColor)
-		sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.fontColor[1],activePieProfile.fontColor[2],activePieProfile.fontColor[3],128])
-		;resting color
-	}
+        }else{
+                ; Use the slice specific color even when not selected
+                strokeColor := RGBAtoHEX(sliceColor)
+                labelBGColor := RGBAtoHEX(sliceColor)
+                textColor := RGBAtoHEX(activePieProfile.fontColor)
+                sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.fontColor[1],activePieProfile.fontColor[2],activePieProfile.fontColor[3],128])
+                ;resting color
+        }
 		
 	outerRectSize := [Max(contentRect[1]+(2*pad[1]), minBoxWidth, contentRect[2]+(2*pad[2])), contentRect[2]+(2*pad[2])]	
 	
