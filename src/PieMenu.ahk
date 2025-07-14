@@ -61,6 +61,8 @@ global SliceHotkey
 SliceHotkey.pressed := false
 global ExitKey
 ExitKey.pressed := false
+; global toggle state for suspending all hotkeys
+global AppSuspended := false
 
 ; global pieDPIScale
 getMonitorCoords(Mon.left , Mon.right , Mon.top , Mon.bottom )
@@ -70,6 +72,13 @@ SetUpGDIP(0, 0, 50, 50) ;windows were appearing over taskbar without -0.01
 SetUpGDIP(0, 0, 0, 0) ; To Fix white box in screenshare (https://github.com/dumbeau/AutoHotPie/issues/115)
 
 verifyFont()
+
+; Hotkey to toggle AutoHotPie on/off. Default: F12
+F12::
+    AppSuspended := !AppSuspended
+    Suspend, % AppSuspended ? "On" : "Off"
+    TrayTip, AutoHotPie, % AppSuspended ? "Hotkeys Disabled" : "Hotkeys Enabled", 1
+return
 
 ;Set up icon menu tray options
 if (A_IsCompiled){
