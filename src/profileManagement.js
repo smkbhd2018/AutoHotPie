@@ -142,7 +142,8 @@ var profileManagement = {
             this.addPieEnableKeyModeRadioHoldListener()
             this.addPieEnableKeyModeRadioHoldListener()
             this.addPieEnableKeyModeRadioToggleListener()
-            this.addMoreSettingsListener();  
+            this.addPieEnableKeyModeRadioSwitcherListener()
+            this.addMoreSettingsListener();
             this.addPieEnableKeySendOriginalFuncListener();  
             $('#less-profile-settings-btn-text').toggle();                
             $('#more-profile-settings-div').toggle();                                       
@@ -166,10 +167,11 @@ var profileManagement = {
             }
             
             this.keyBtn.html(new Hotkey(selectedPieEnableKey.enableKey).displayKey);
-            this.modeRadioHold.checked = !(selectedPieEnableKey.toggle);
+            this.modeRadioHold.checked = !(selectedPieEnableKey.toggle || selectedPieEnableKey.keySwitcher);
             this.modeRadioToggle.checked = selectedPieEnableKey.toggle;
+            this.modeRadioSwitcher.checked = selectedPieEnableKey.keySwitcher;
             this.sendOriginalFuncCheckbox.prop('checked', selectedPieEnableKey.sendOriginalFunc);
-            if (selectedPieEnableKey.toggle == false){                
+            if (selectedPieEnableKey.toggle == false && !selectedPieEnableKey.keySwitcher){
                 this.sendOriginalFuncDiv.show();
             } else {
                 this.sendOriginalFuncDiv.hide();
@@ -215,11 +217,20 @@ var profileManagement = {
             })
         },
         modeRadioToggle: document.getElementById("pie-enable-key-radio-toggle"),
-        addPieEnableKeyModeRadioToggleListener:function(){            
+        addPieEnableKeyModeRadioToggleListener:function(){
             this.modeRadioToggle.addEventListener("click", function(event){
                 profileManagement.selectedProfile.pieEnableKey.toggle = true;
-                profileManagement.pieEnableKey.updateUIControls();    
-            })                   
+                profileManagement.selectedProfile.pieEnableKey.keySwitcher = false;
+                profileManagement.pieEnableKey.updateUIControls();
+            })
+        },
+        modeRadioSwitcher: document.getElementById("pie-enable-key-radio-switcher"),
+        addPieEnableKeyModeRadioSwitcherListener:function(){
+            this.modeRadioSwitcher.addEventListener("click", function(event){
+                profileManagement.selectedProfile.pieEnableKey.keySwitcher = true;
+                profileManagement.selectedProfile.pieEnableKey.toggle = false;
+                profileManagement.pieEnableKey.updateUIControls();
+            })
         },
         sendOriginalFuncDiv: $('#send-original-key-checkbox-div'),
         sendOriginalFuncCheckbox: $('#send-original-key-checkbox-input'),

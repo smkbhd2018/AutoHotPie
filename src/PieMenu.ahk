@@ -181,9 +181,14 @@ onPieLabel:
 return
 
 offPieLabel:
-	pieEnableKey.modOff()
+        pieEnableKey.modOff()
 ; msgbox, ActiveProfile
 ; msgbox, off
+return
+
+switcherLabel:
+        Suspend, Permit
+        Suspend, Toggle
 return
 
 blockLabel:

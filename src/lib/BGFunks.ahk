@@ -226,19 +226,23 @@ loadPieMenus(){
 					Try Hotkey, % pieKey.hotkey, Off
 					}
 				}			
-			If (profile.pieEnableKey.useEnableKey == true)
-				{
-					If (profile.pieEnableKey.toggle == true)
-						{					
-						Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel				
-						}
-					else
-						{
-						Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
-						upHotkey := profile.pieEnableKey.enableKey " up"
-						Hotkey, % upHotkey, offPieLabel
-						}
-				}
+                                If (profile.pieEnableKey.useEnableKey == true)
+                                {
+                                        If (profile.pieEnableKey.keySwitcher == true)
+                                                {
+                                                Hotkey, % profile.pieEnableKey.enableKey, switcherLabel
+                                                }
+                                        else If (profile.pieEnableKey.toggle == true)
+                                                {
+                                                Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel
+                                                }
+                                        else
+                                                {
+                                                Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
+                                                upHotkey := profile.pieEnableKey.enableKey " up"
+                                                Hotkey, % upHotkey, offPieLabel
+                                                }
+                                }
 		}
 	}
 
@@ -262,19 +266,23 @@ loadPieMenus(){
 					Try Hotkey, % pieKey.hotkey, Off
 					}
 				}			
-			If (profile.pieEnableKey.useEnableKey == true)
-				{
-				If (profile.pieEnableKey.toggle == true)
-					{					
-					Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel				
-					}
-				else
-					{
-					Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
-					upHotkey := profile.pieEnableKey.enableKey " up"
-					Hotkey, % upHotkey, offPieLabel
-					}
-				}
+                                If (profile.pieEnableKey.useEnableKey == true)
+                                {
+                                If (profile.pieEnableKey.keySwitcher == true)
+                                        {
+                                        Hotkey, % profile.pieEnableKey.enableKey, switcherLabel
+                                        }
+                                else If (profile.pieEnableKey.toggle == true)
+                                        {
+                                        Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel
+                                        }
+                                else
+                                        {
+                                        Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
+                                        upHotkey := profile.pieEnableKey.enableKey " up"
+                                        Hotkey, % upHotkey, offPieLabel
+                                        }
+                                }
         }
 		else                                                ;app specific context
 		{
@@ -297,19 +305,23 @@ loadPieMenus(){
 						Try Hotkey, % pieKey.hotkey, Off
 						}
 					}			
-				If (profile.pieEnableKey.useEnableKey == true)
-					{
-					If (profile.pieEnableKey.toggle == true)
-						{
-							Try Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel				
-						}
-					else
-						{
-						Try Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
-						upHotkey := profile.pieEnableKey.enableKey " up"
-						Try Hotkey, % upHotkey, offPieLabel
-						}
-					}
+                                If (profile.pieEnableKey.useEnableKey == true)
+                                        {
+                                        If (profile.pieEnableKey.keySwitcher == true)
+                                                {
+                                                        Try Hotkey, % profile.pieEnableKey.enableKey, switcherLabel
+                                                }
+                                        else If (profile.pieEnableKey.toggle == true)
+                                                {
+                                                        Try Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel
+                                                }
+                                        else
+                                                {
+                                                Try Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
+                                                upHotkey := profile.pieEnableKey.enableKey " up"
+                                                Try Hotkey, % upHotkey, offPieLabel
+                                                }
+                                        }
 			}			          
         }
 					
