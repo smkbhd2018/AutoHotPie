@@ -55,6 +55,8 @@ global PieLaunchedState := false
 global PenClicked := false
 global PieMenuRanWithMod := false
 
+global PieMenusEnabled := true
+
 global LMB
 LMB.pressed := false
 global SliceHotkey
@@ -187,8 +189,15 @@ offPieLabel:
 return
 
 switcherLabel:
+        global PieMenusEnabled
         Suspend, Permit
-        Suspend, Toggle
+        if (PieMenusEnabled){
+                Suspend, On
+                PieMenusEnabled := false
+        } else {
+                Suspend, Off
+                PieMenusEnabled := true
+        }
 return
 
 blockLabel:
