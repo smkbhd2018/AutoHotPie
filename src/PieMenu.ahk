@@ -32,6 +32,19 @@ global UserDataFolder, Settings
 global IsStandAlone := false
 loadSettingsFile() ;loads JSON to Settings global variable
 
+;Set up file to remember global pie menu enable state
+GlobalPieStateFile := UserDataFolder . "\\globalPieMenuState.txt"
+if (FileExist(GlobalPieStateFile))
+{
+    FileRead, globalPieState, %GlobalPieStateFile%
+    if (globalPieState == "0")
+        GlobalPieMenuEnabled := false
+}
+else
+{
+    FileAppend, 1, %GlobalPieStateFile%
+}
+
 ;Initialize Variables and GDI+ Screen bitmap
 ;Tariq Porter, you will forever have a special place in my heart.
 
@@ -55,6 +68,7 @@ global PieLaunchedState := false
 global PenClicked := false
 global PieMenuRanWithMod := false
 global GlobalPieMenuEnabled := true
+global GlobalPieStateFile
 
 global LMB
 LMB.pressed := false
@@ -91,6 +105,8 @@ if (!IsStandAlone){
 	Menu, Tray, Default , AutoHotPie Settings
 }
 loadPieMenus()
+if (!GlobalPieMenuEnabled)
+    applyGlobalPieMenuState()
 return ;End Initialization
 
 pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
@@ -301,8 +317,15 @@ exitapp
 return
 
 toggleGlobalPieMenus(){
-    global GlobalPieMenuEnabled, Settings
+    global GlobalPieMenuEnabled, Settings, GlobalPieStateFile
     GlobalPieMenuEnabled := !GlobalPieMenuEnabled
+    FileDelete, %GlobalPieStateFile%
+    FileAppend, % (GlobalPieMenuEnabled ? "1" : "0"), %GlobalPieStateFile%
+    applyGlobalPieMenuState()
+}
+
+applyGlobalPieMenuState(){
+    global GlobalPieMenuEnabled, Settings
     notifyPieEnableState(GlobalPieMenuEnabled)
     for profileIndex, profile in Settings.appProfiles
     {
