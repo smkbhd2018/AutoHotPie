@@ -54,6 +54,7 @@ global PieLaunchedState := false
 
 global PenClicked := false
 global PieMenuRanWithMod := false
+global GlobalPieMenuEnabled := true
 
 global LMB
 LMB.pressed := false
@@ -187,8 +188,13 @@ offPieLabel:
 return
 
 blockLabel:
-	PressedSliceHotkeyName := A_ThisHotkey
+        PressedSliceHotkeyName := A_ThisHotkey
 ; msgbox, % PressedSliceHotkeyName
+return
+
+; Toggle all pie menus on/off with the 9 key
+9::
+        toggleGlobalPieMenus()
 return
 
 #If DebugMode = true
@@ -293,3 +299,31 @@ Return
 QuitPieMenus:
 exitapp
 return
+
+toggleGlobalPieMenus(){
+    global GlobalPieMenuEnabled, Settings
+    GlobalPieMenuEnabled := !GlobalPieMenuEnabled
+    notifyPieEnableState(GlobalPieMenuEnabled)
+    for profileIndex, profile in Settings.appProfiles
+    {
+        if (profile.enable == false)
+            continue
+        profile.pieEnableKey.enableState := GlobalPieMenuEnabled
+        state := (GlobalPieMenuEnabled) ? "On" : "Off"
+        for pieKeyIndex, pieKey in profile.pieKeys
+        {
+            if (pieKey.enable == false)
+                continue
+            Try Hotkey, % pieKey.hotkey, % state
+        }
+        if (profile.pieEnableKey.useEnableKey == true)
+        {
+            Try Hotkey, % profile.pieEnableKey.enableKey, % state
+            if (!profile.pieEnableKey.toggle)
+            {
+                upHotkey := profile.pieEnableKey.enableKey . " up"
+                Try Hotkey, % upHotkey, % state
+            }
+        }
+    }
+}
