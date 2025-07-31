@@ -1759,6 +1759,7 @@ class PieMenu {
             backgroundColor: [35,35,35,255],
             selectionColor: [30,232,226,255],
             fontColor: [255,255,255,255],
+            layout: "radial",
             radius: 20,
             thickness: 10,
             labelRadius: 80,

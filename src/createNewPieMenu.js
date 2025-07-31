@@ -7,6 +7,7 @@ var newPieMenu = {
     activationModeValidationWarning: $('#activation-mode-validation-warning'),
     selectionColorInput: $('#new-selection-color-input')[0].jscolor,    
     backgroundColorInput: $('#new-background-color-input')[0].jscolor,
+    layoutSelect: document.getElementById('new-menu-layout-select'),
     cancelBtn: document.getElementById('new-pie-menu-cancel-btn'),
     createBtn: document.getElementById('new-pie-menu-create-btn'),
     backBtn: document.getElementById('new-pie-menu-back-btn'),
@@ -38,11 +39,14 @@ var newPieMenu = {
         this.selectionColorInput.onChange = function(){
             newPieMenu.newPieKeyObj.pieMenus[0].selectionColor = hexToRgb(this.toHEXString());                        
         };
-        this.backgroundColorInput.onChange = function(){            
+        this.backgroundColorInput.onChange = function(){
             newPieMenu.newPieKeyObj.pieMenus.forEach((pieMenu) => {
                 pieMenu.backgroundColor = hexToRgb(this.toHEXString());
-            });                       
+            });
         };
+        this.layoutSelect.addEventListener('change', function(event){
+            newPieMenu.newPieKeyObj.pieMenus.forEach((pieMenu) => {pieMenu.layout = event.target.value});
+        });
         this.pieMenuNameField.addEventListener("change", function(event){
             newPieMenu.newPieKeyObj.name = event.target.value;            
         });
@@ -95,6 +99,7 @@ var newPieMenu = {
         this.pieKeyBtn.innerHTML = "Choose Keystroke...";        
         this.selectionColorInput.processValueInput(rgbToHex(np.newPieKeyObj.pieMenus[0].selectionColor));
         this.backgroundColorInput.processValueInput(rgbToHex(np.newPieKeyObj.pieMenus[0].backgroundColor));
+        this.layoutSelect.value = np.newPieKeyObj.pieMenus[0].layout;
     }
 }
 
@@ -130,7 +135,8 @@ async function createNewPieMenu(options={}){
                 selectionColor: copyMenu.pieMenus[0].selectionColor,
                 radius:copyMenu.pieMenus[0].radius,
                 thickness:copyMenu.pieMenus[0].thickness,
-                labelRadius: copyMenu.pieMenus[0].labelRadius,                
+                labelRadius: copyMenu.pieMenus[0].labelRadius,
+                layout: copyMenu.pieMenus[0].layout,
                 pieAngle: 22.5,
                 functions: PieFunction.fill(9)
             })]
