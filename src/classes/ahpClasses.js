@@ -1777,7 +1777,8 @@ class PieMenu {
 class PieFunction {
     constructor(_pieFunction=null){   
         let defaults = { function: "none",
-            params: (_pieFunction !== null) ? PieFunction.getPieFunctionDefaultParameters(_pieFunction.function) : {},            
+            params: (_pieFunction !== null) ? PieFunction.getPieFunctionDefaultParameters(_pieFunction.function) : {},
+            selectionColor: [30,232,226,255],
             label: "New Slice",
             hotkey: "",
             clickable: false,

@@ -1334,11 +1334,17 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 
 	
 	bgColor := activePieProfile.backgroundColor
-	selectColor := activePieProfile.selectionColor
+       selectColor := activePieProfile.selectionColor
 
 
 
-	nTheta := (Floor(cycleRange(theta-thetaOffset)/(360/numSlices))*(360/numSlices))+thetaOffset
+       calculatedPieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1
+       if (dist <= radius && !drawIndicator)
+               pieRegion := 0
+       else
+               pieRegion := calculatedPieRegion
+       sliceColor := (pieRegion > 0 && pieRegion <= numSlices) ? activePieProfile.functions[pieRegion+1].selectionColor : selectColor
+       nTheta := ((calculatedPieRegion-1)*(360/numSlices))+thetaOffset
 	gmx := xPos
 	gmy := yPos
 	submenuMarkRadius := radius+thickness+(5*Mon.pieDPIScale)
@@ -1354,22 +1360,16 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 	; Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 	Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 
-	If (dist <= radius)
-		{
-		selectPen := Gdip_CreatePen(RGBAtoHEX(selectColor), thickness/2)
-		Gdip_DrawEllipse(G, selectPen, (gmx-((radius)+ (thickness / 4))), (gmy-((radius)+ (thickness / 4))), 2*radius+(thickness/2), 2*radius+(thickness/2))
-		if drawIndicator
-			pieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1	
-		else
-			pieRegion := 0
-		}
-	Else
-		{
-		selectPen := Gdip_CreatePen(RGBAtoHEX(selectColor), thickness)
-		Gdip_DrawArc(G, selectPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (nTheta)-90, (360/numSlices))	
-		pieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1	
-		; pieRegion := nTheta/(360/numSlices)
-		}
+       If (dist <= radius)
+               {
+               selectPen := Gdip_CreatePen(RGBAtoHEX(sliceColor), thickness/2)
+               Gdip_DrawEllipse(G, selectPen, (gmx-((radius)+ (thickness / 4))), (gmy-((radius)+ (thickness / 4))), 2*radius+(thickness/2), 2*radius+(thickness/2))
+               }
+       Else
+               {
+               selectPen := Gdip_CreatePen(RGBAtoHEX(sliceColor), thickness)
+               Gdip_DrawArc(G, selectPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (nTheta)-90, (360/numSlices))
+               }
 	;Draw pie slice indicators
 
 	
@@ -1434,8 +1434,9 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="center", clicked:=false, labelIcon="")
 	{
 	iconSizeSquare := Ceil(Settings.global.globalAppearance.iconSize*Mon.pieDPIScale)
-	labelText := sliceFunction.label	
-	sliceHotkey := sliceFunction.hotkey
+        labelText := sliceFunction.label
+        sliceHotkey := sliceFunction.hotkey
+        sliceColor := (IsObject(sliceFunction) && ObjHasKey(sliceFunction, "selectionColor")) ? sliceFunction.selectionColor : activePieProfile.selectionColor
 	innerWidthPadding := Ceil(6*(((Mon.pieDPIScale-1)/2)+1))
 
 	;Determine iconFolder
@@ -1484,7 +1485,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	If (!FileExist(iconFile) || (sliceFunction.icon.filepath == ""))
 		iconFile := ""
 	if ( iconFile != ""){
-		newElement := {type:"icon",rect:[iconSizeSquare,iconSizeSquare],padding:[innerWidthPadding,innerWidthPadding],restColor:RGBAtoHEX(activePieProfile.selectionColor),hoveredColor:RGBAtoHEX(activePieProfile.backgroundColor),selectedColor:RGBAtoHEX(activePieProfile.backgroundColor)}
+		newElement := {type:"icon",rect:[iconSizeSquare,iconSizeSquare],padding:[innerWidthPadding,innerWidthPadding],restColor:RGBAtoHEX(sliceColor),hoveredColor:RGBAtoHEX(activePieProfile.backgroundColor),selectedColor:RGBAtoHEX(activePieProfile.backgroundColor)}
 		pBitmaps := Gdip_CreateBitmapFromFile(iconFile)		
 		iconFile := iconFolder . "\" . sliceFunction.icon.filepath
 		labelElements.Push(newElement)
@@ -1532,27 +1533,28 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	if (selected == 1){
 		if (clicked == true){
 			;clicked color
-			strokeColor := RGBAtoHEX(activePieProfile.selectionColor)
-			labelBGColor := RGBAtoHEX(activePieProfile.selectionColor)
+			strokeColor := RGBAtoHEX(sliceColor)
+			labelBGColor := RGBAtoHEX(sliceColor)
 			textColor := RGBAtoHEX(activePieProfile.backgroundColor)	
 			sliceHotkeyTextColor := RGBAtoHEX(activePieProfile.backgroundColor)				
 			
 		} else {
-			strokeColor := RGBAtoHEX(activePieProfile.selectionColor)
+			strokeColor := RGBAtoHEX(sliceColor)
 			; labelBGColor := RGBAtoHEX(whitenRGB(activePieProfile.backgroundColor))
-			labelBGColor := RGBAtoHEX(activePieProfile.selectionColor)
+			labelBGColor := RGBAtoHEX(sliceColor)
 			; textColor := RGBAtoHEX([255, 255, 255, 255])
 			textColor := RGBAtoHEX(activePieProfile.backgroundColor)
 			sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.backgroundColor[1],activePieProfile.backgroundColor[2],activePieProfile.backgroundColor[3],128])	
 			;hover color
 		}
-	}else{
-		strokeColor := RGBAtoHEX(safetyGreyColor)
-		labelBGColor := RGBAtoHEX(activePieProfile.backgroundColor)
-		textColor := RGBAtoHEX(activePieProfile.fontColor)
-		sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.fontColor[1],activePieProfile.fontColor[2],activePieProfile.fontColor[3],128])
-		;resting color
-	}
+        }else{
+                ; Use the slice specific color even when not selected
+                strokeColor := RGBAtoHEX(sliceColor)
+                labelBGColor := RGBAtoHEX(sliceColor)
+                textColor := RGBAtoHEX(activePieProfile.fontColor)
+                sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.fontColor[1],activePieProfile.fontColor[2],activePieProfile.fontColor[3],128])
+                ;resting color
+        }
 		
 	outerRectSize := [Max(contentRect[1]+(2*pad[1]), minBoxWidth, contentRect[2]+(2*pad[2])), contentRect[2]+(2*pad[2])]	
 	
@@ -1582,7 +1584,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 			iconPosition := [rectCenter[1]-(contentRect[1]/2)+(iconSizeSquare/2), rectCenter[2]]
 			if (sliceFunction.icon.WBOnly == true)
 				{									
-				colW := activePieProfile.selectionColor
+				colW := sliceColor
 				; colB := safetyGreyColor
 				If (selected = 1)
 					{
@@ -1591,7 +1593,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 					}					
 				Else
 					{
-					colW := activePieProfile.selectionColor
+					colW := sliceColor
 					imageMatrix := "0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|" . (colW[1]/255) . "|" . (colW[2]/255) . "|" . (colW[3]/255) . "|0|1"
 					}
 				}
