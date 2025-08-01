@@ -55,6 +55,8 @@ global PieLaunchedState := false
 global PenClicked := false
 global PieMenuRanWithMod := false
 
+global PieMenusEnabled := true
+
 global LMB
 LMB.pressed := false
 global SliceHotkey
@@ -181,9 +183,21 @@ onPieLabel:
 return
 
 offPieLabel:
-	pieEnableKey.modOff()
+        pieEnableKey.modOff()
 ; msgbox, ActiveProfile
 ; msgbox, off
+return
+
+switcherLabel:
+        global PieMenusEnabled
+        Suspend, Permit
+        if (PieMenusEnabled){
+                Suspend, On
+                PieMenusEnabled := false
+        } else {
+                Suspend, Off
+                PieMenusEnabled := true
+        }
 return
 
 blockLabel:

@@ -1707,7 +1707,8 @@ class AppProfile {
                 useEnableKey: false,
                 enableKey: "capslock",
                 toggle: false,
-                sendOriginalFunc: false          
+                sendOriginalFunc: false,
+                keySwitcher: false
             },
             pieKeys: []            
         };
