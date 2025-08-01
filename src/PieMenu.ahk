@@ -32,6 +32,19 @@ global UserDataFolder, Settings
 global IsStandAlone := false
 loadSettingsFile() ;loads JSON to Settings global variable
 
+;Set up file to remember global pie menu enable state
+GlobalPieStateFile := UserDataFolder . "\\globalPieMenuState.txt"
+if (FileExist(GlobalPieStateFile))
+{
+    FileRead, globalPieState, %GlobalPieStateFile%
+    if (globalPieState == "0")
+        GlobalPieMenuEnabled := false
+}
+else
+{
+    FileAppend, 1, %GlobalPieStateFile%
+}
+
 ;Initialize Variables and GDI+ Screen bitmap
 ;Tariq Porter, you will forever have a special place in my heart.
 
@@ -54,6 +67,8 @@ global PieLaunchedState := false
 
 global PenClicked := false
 global PieMenuRanWithMod := false
+global GlobalPieMenuEnabled := true
+global GlobalPieStateFile
 
 global LMB
 LMB.pressed := false
@@ -90,6 +105,8 @@ if (!IsStandAlone){
 	Menu, Tray, Default , AutoHotPie Settings
 }
 loadPieMenus()
+if (!GlobalPieMenuEnabled)
+    applyGlobalPieMenuState()
 return ;End Initialization
 
 pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
@@ -187,8 +204,13 @@ offPieLabel:
 return
 
 blockLabel:
-	PressedSliceHotkeyName := A_ThisHotkey
+        PressedSliceHotkeyName := A_ThisHotkey
 ; msgbox, % PressedSliceHotkeyName
+return
+
+; Toggle all pie menus on/off with the 9 key
+9::
+        toggleGlobalPieMenus()
 return
 
 #If DebugMode = true
@@ -293,3 +315,38 @@ Return
 QuitPieMenus:
 exitapp
 return
+
+toggleGlobalPieMenus(){
+    global GlobalPieMenuEnabled, Settings, GlobalPieStateFile
+    GlobalPieMenuEnabled := !GlobalPieMenuEnabled
+    FileDelete, %GlobalPieStateFile%
+    FileAppend, % (GlobalPieMenuEnabled ? "1" : "0"), %GlobalPieStateFile%
+    applyGlobalPieMenuState()
+}
+
+applyGlobalPieMenuState(){
+    global GlobalPieMenuEnabled, Settings
+    notifyPieEnableState(GlobalPieMenuEnabled)
+    for profileIndex, profile in Settings.appProfiles
+    {
+        if (profile.enable == false)
+            continue
+        profile.pieEnableKey.enableState := GlobalPieMenuEnabled
+        state := (GlobalPieMenuEnabled) ? "On" : "Off"
+        for pieKeyIndex, pieKey in profile.pieKeys
+        {
+            if (pieKey.enable == false)
+                continue
+            Try Hotkey, % pieKey.hotkey, % state
+        }
+        if (profile.pieEnableKey.useEnableKey == true)
+        {
+            Try Hotkey, % profile.pieEnableKey.enableKey, % state
+            if (!profile.pieEnableKey.toggle)
+            {
+                upHotkey := profile.pieEnableKey.enableKey . " up"
+                Try Hotkey, % upHotkey, % state
+            }
+        }
+    }
+}
